@@ -1,0 +1,188 @@
+:root {
+  --red: #e01b24;
+  --balts: #ffffff;
+  --bg: #5e5c64;
+  --bg2: #333;
+  --blak: black;
+  --gray: #ccc;
+  --gray1: #ddd;
+  --gray2: #3c3c3c;
+  --wait: #f9f9f9;
+  --pink: #ff9a9a;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+}
+
+.augsa {
+  overflow: hidden;
+  background-color: var(--bg2);
+  border-radius: 20px;
+}
+
+.augsa a {
+  float: left;
+  font-size: 16px;
+  color: var(--balts);
+  text-align: center;
+  padding: 20px 20px;
+  text-decoration: none;
+}
+
+.menu .poga {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: var(--balts);
+  padding: 20px 20px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.spelo .poga2 {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: var(--balts);
+  padding: 20px 20px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.augsa a:hover,
+.menu:hover .poga {
+  background-color: var(--red);
+}
+
+.augsa a:hover,
+.spelo:hover .poga2 {
+  background-color: var(--red);
+}
+
+.iest {
+  display: none;
+  position: absolute;
+  background-color: var(--wait);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.iest a {
+  float: none;
+  color: var(--blak);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.iest a:hover {
+  background-color: var(--gray1);
+}
+
+.yo {
+  display: none;
+  position: absolute;
+  background-color: var(--balts);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.yo a {
+  float: none;
+  color: var(--blak);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.yo a:hover {
+  background-color: var(--gray1);
+}
+
+.menu:hover .iest {
+  display: block;
+}
+
+.spelo:hover .yo {
+  display: block;
+}
+
+.podzinjas {
+  float: right;
+  overflow: hidden;
+}
+
+.menu {
+  float: right;
+  overflow: hidden;
+}
+
+.spelo {
+  float: right;
+  overflow: hidden;
+}
+
+.podzinjas .nospiezc {
+  background-color: var(--gray2) ; 
+}
+
+.yo .nospiezc {
+  background-color: var(--pink) ; 
+}
+
+.logo {
+  float: left;
+  padding: 7px 6px;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 34px;
+  height: 14px;
+  background-color: var(--gray);
+  border-radius: 34px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: -3px;
+  bottom: -3px;
+  background-color: var(--balts);
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--red);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
