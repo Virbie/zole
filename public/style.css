@@ -1,0 +1,130 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.augsa {
+  overflow: hidden;
+  background-color: #333;
+  border-radius: 10px;
+}
+
+.augsa a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.menu .poga {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.spelo .poga2 {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.augsa a:hover,
+.menu:hover .poga {
+  background-color: #c061cb;
+}
+
+.augsa a:hover,
+.spelo:hover .poga2 {
+  background-color: #c061cb;
+}
+
+.iest {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.iest a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.iest a:hover {
+  background-color: #ddd;
+}
+
+.yo {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.yo a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.yo a:hover {
+  background-color: #ddd;
+}
+
+.menu:hover .iest {
+  display: block;
+}
+
+.spelo:hover .yo {
+  display: block;
+}
+
+.podzinjas {
+  float: right;
+  overflow: hidden;
+}
+
+.menu {
+  float: right;
+  overflow: hidden;
+}
+
+.spelo {
+  float: right;
+  overflow: hidden;
+}
+
+.podzinjas .nospiezc {
+  background-color: #3c3c3c; 
+}
+
+.yo .nospiezc {
+  background-color: #feccff; 
+}
