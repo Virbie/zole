@@ -1,8 +1,8 @@
 :root {
   --red: #e01b24;
   --balts: #ffffff;
-  --bg: #5e5c64;
-  --bg2: #333;
+  --bg: #000000;
+  --bg2: #1b1b1b;
   --blak: black;
   --gray: #ccc;
   --gray1: #ddd;
@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "comic sans ms", cursive, sans-serif;
   background-color: var(--bg);
 }
 
@@ -25,6 +25,7 @@ body {
   overflow: hidden;
   background-color: var(--bg2);
   border-radius: 20px;
+  margin-bottom: 20px;
 }
 
 .augsa a {
@@ -136,11 +137,11 @@ body {
 }
 
 .podzinjas .nospiezc {
-  background-color: var(--gray2) ; 
+  background-color: var(--gray2);
 }
 
 .yo .nospiezc {
-  background-color: var(--pink) ; 
+  background-color: var(--pink);
 }
 
 .logo {
@@ -167,6 +168,7 @@ body {
   cursor: pointer;
   transition: 0.4s;
 }
+
 .slider:before {
   position: absolute;
   content: "";
@@ -179,10 +181,50 @@ body {
   transition: 0.4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: var(--red);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(20px);
+}
+
+.tekstinjs {
+  color: var(--balts);
+  font-size: 15px;
+  padding: 8px 12px;
+  bottom: 8px;
+  width: 100%;
+  text-align: left;
+  font-weight: bolder;
+}
+
+.sigma {
+  display: flex;
+  overflow: hidden;
+  background-color: var(--bg2);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.sigma a {
+  float: left;
+  font-size: 16px;
+  color: var(--balts);
+  text-align: center;
+  padding: 20px 20px;
+  text-decoration: none;
+}
+
+.bilde,.tekstinjs {
+  flex: 1;
+  padding: 8px;
+}
+
+.bilde img {
+  width: 250px;
+  height: 250px;
+  padding: 10px 10px;
+  border-radius: 20px;
+  float: center;
 }
