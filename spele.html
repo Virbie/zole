@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+	<meta charset="UTF-8">
+</head>
+<body>
+<img src="../resources/1.png" alt="sliktiu" width="300" height="300">
+
+
+<div id = "cardcontainer"><div/>
+<!-- Vieta kartēm -->
+
+<script type="text/javascript" src="../backend.js"></script>
+    <script> 
+    let cards = [0, 0, 0, 0, 0, 0, 0, 0] // šeit ir kartšu objekti
+    let container = document.getElementById("cardcontainer") // JS lieta, kura rāda kartes
+        // Example function to handle card dealing and updating DOM
+    function displayCards() {
+        Karsudalisana(); // Call the function from backend.js
+             // Log the result to the console
+
+
+            
+        document.getElementById("Visaskartis").innerText = kartis || "No cards available.";
+        document.getElementById("Player1kartis").innerText = player1 || "No cards available.";
+        document.getElementById("Player2kartis").innerText = player2 || "No cards available.";
+        document.getElementById("Player3kartis").innerText = player3 || "No cards available.";
+        // Display the cards in the paragraph element
+        
+
+        for (i = 0; i< 8;i++){
+        	if(cards[i] != 0){ // ja "cards" jau ir kartes - kādas kartes ir uz website
+        		container.removeChild(cards[i]) // izdzēst no konteinera (no website)
+        	}
+            // izveidot jaunu kartes objektu
+        	const img = document.createElement("img")
+      		img.src = "../resources/" + player1[i] + ".png" // bildīte
+      		img.id = "card" + i // id nav izmantots tagad
+      		img.classList.add("card") // clase - svarīgi
+      		img.width = 150
+      		img.height = 250
+
+      		cards[i] = img // saglabājam
+      		container.appendChild(img) // rādam
+        }
+
+        // ja ir kliks uz karti
+        cardcontainer.addEventListener("click", (event) => {
+        	if(event.target.classList.contains("card")){
+        		event.target.remove() // izdzēst
+        	}
+        })
+      	
+    }
+
+
+    </script>
+
+
+    <p id="Visaskartis">Cards will appear here.</p>
+    <p id="Player1kartis">Cards will appear here.</p>
+    <p id="Player2kartis">Cards will appear here.</p>
+    <p id="Player3kartis">Cards will appear here.</p>
+    <button type="button" onclick="displayCards()">Try it</button>
+
+
+
+</body>
+</html>
