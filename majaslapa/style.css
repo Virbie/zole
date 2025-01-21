@@ -192,10 +192,12 @@ input:checked+.slider:before {
 .tekstinjs {
   color: var(--balts);
   font-size: 15px;
-  padding: 8px 12px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
   bottom: 8px;
   width: 100%;
-  text-align: left;
+  text-align: center;
   font-weight: bolder;
 }
 
@@ -204,7 +206,9 @@ input:checked+.slider:before {
   overflow: hidden;
   background-color: var(--bg2);
   border-radius: 20px;
-  margin-bottom: 20px;
+  margin: 20px 10px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .sigma a {
@@ -212,11 +216,12 @@ input:checked+.slider:before {
   font-size: 16px;
   color: var(--balts);
   text-align: center;
-  padding: 20px 20px;
+  padding: 20px;
   text-decoration: none;
 }
 
-.bilde,.tekstinjs {
+.bilde,
+.tekstinjs {
   flex: 1;
   padding: 8px;
 }
@@ -224,11 +229,29 @@ input:checked+.slider:before {
 .bilde img {
   width: 250px;
   height: 250px;
-  padding: 10px 10px;
+  padding: 10px ;
   border-radius: 20px;
-  float: center;
+  display: block;
+  margin: 0 auto;
 }
-
-p{
-  color:white;
+.content {
+max-width: 1000px;
+width: 100%;
+margin: 0 auto;
+padding: 20px;
+box-sizing: border-box;
+}
+@media (max-width: 750px) {
+  .sigma {
+    flex-direction: column;
+    align-items: center;
+  }
+  .bilde,
+  .tekstinjs {
+    padding: 0;
+  }
+  .bilde img {
+    width: 100%;
+    height: auto;
+  }
 }
