@@ -51,6 +51,29 @@
         <a href="spele.html">spēle</a>
       </div>
     </div>
+    <script type="text/javascript" src="backend.js"></script>
+    <script> 
+        // Example function to handle card dealing and updating DOM
+        function displayCards() {
+            Karsudalisana(); // Call the function from backend.js
+             // Log the result to the console
+
+
+            
+            document.getElementById("Visaskartis").innerText = kartis || "No cards available.";
+            document.getElementById("Player1kartis").innerText = player1 || "No cards available.";
+            document.getElementById("Player2kartis").innerText = player2 || "No cards available.";
+            document.getElementById("Player3kartis").innerText = player3 || "No cards available.";
+            // Display the cards in the paragraph element
+            
+        }
+    </script>
+
+    <p id="Visaskartis">Cards will appear here.</p>
+    <p id="Player1kartis">Cards will appear here.</p>
+    <p id="Player2kartis">Cards will appear here.</p>
+    <p id="Player3kartis">Cards will appear here.</p>
+    <button type="button" onclick="displayCards()">Try it</button>
     <div id="footer"></div>
   </body>
 </html>
