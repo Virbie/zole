@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js"></script>
+  <script src="include_footer.js"></script>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="augsa">
+      <div class="logo">
+        <img src="./resources/zolitelogo.png" alt="logo" height="40px" />
+      </div>
+      <div class="menu">
+        <button class="poga">
+          iestatijumi
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="iest">
+          <label class="switch">
+            <input type="checkbox" id="set1" />
+            <span class="slider"></span> rave
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="set2" />
+            <span class="slider"></span> set2
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="set3" />
+            <span class="slider"></span> set3
+          </label>
+        </div>
+      </div>
+      <div class="spelo">
+        <button class="poga2">
+          spēlē tagat
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="yo">
+          <a href="createspele.html" class="nospiezc">izveido spēli</a>
+          <a href="joinspele.html">pievienojies spēlei</a>
+        </div>
+      </div>
+      <div class="podzinjas">
+        <a href="index.html">sākums</a>
+        <a href="spele.html">spēle</a>
+      </div>
+    </div>
+
+
+
+
+
+    
+   
+   
+    <style>
+        /* Center the card container on the screen */
+        #cardcontainer {
+
+            display: flex; /* Enables flexbox */
+            justify-content: center; /* Horizontally centers the cards */
+            align-items: center; /* Vertically centers the cards */
+            margin-bottom: 100px;
+            height: 300px; /* Set a specific height for the card area */
+            width: 90%;
+            border: 2px solid #ccc; /* Optional: for visibility */
+        }
+
+        .card {
+            margin: 10px; /* Space between cards */
+        }
+
+        
+
+    </style>
+
+
+
+    <!-- Text and Button -->
+    <button type="button" onclick="displayCards()">Try it</button>
+    
+    <!-- Card containers -->
+    <div id="kartisUzGalda"></div>
+    <div id="cardcontainer" ></div>
+    
+
+    <script type="text/javascript" src="backend.js"></script>
+    <script>
+        
+        
+
+
+        let cards = []; // Array for card objects
+        let placedCards = [] // PRIEKS noliktam kartim
+        let container = document.getElementById("cardcontainer"); // Card container element
+        let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
+        
+        
+        
+       
+        function Gajiens(){
+          if(playerGajienaID == 2){
+            Bots2(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+            placedCards.push(bot2PlacedNumber)
+            playerGajienaID=3
+            refresh()
+            Gajiens()
+          }else{
+            if(playerGajienaID == 3){
+              Bots3(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+              placedCards.push(bot3PlacedNumber)
+              playerGajienaID = 1
+              
+              refresh()
+              GajienaUzvaretajs(placedCards)
+              Gajiens()
+              acisSumma(placedCards)
+            }
+          }
+          
+
+        }
+
+        function displayCards() {
+            Karsudalisana(); // Call the function from backend.js
+            container.innerHTML = "";
+            
+            
+            for (let i = 0; i < 8; i++) {
+                
+                const img = document.createElement("img");
+                img.src = "./resources/" + player1[i] + ".png"; // Image source
+                img.id = "card" + i; // Optional ID
+                img.classList.add("card"); // Add card class
+                img.width = 150;
+                img.height = 250;
+
+                 // Save the card
+                container.appendChild(img); // Add card to the container
+            }
+
+            // Handle card click
+            
+        }
+        
+        
+        container.addEventListener("click", (event) => {
+          if(playerGajienaID == 1){
+            clearPlacedCards()
+            if (event.target.classList.contains("card")) {
+
+                  placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")))
+                  refresh()
+                  
+                  event.target.remove(); // Remove the clicked card
+                  
+                  playerGajienaID = 2 //pakustina talak gajienu pie player2s
+                  Gajiens() // izsauc nakama cilveka jeb bota gajienu
+              }
+          }       
+        });
+
+        function clearPlacedCards(){
+          placedCards = []
+        }
+
+
+
+        // sakas kartis uz galda paradisana 
+        function refresh() {
+          
+          placedCardsContainer.innerHTML = ""
+          
+          // Remove all previous images before adding new ones
+          
+
+          // Loop through placedCards and add the new images
+          for (let i = 0; i < placedCards.length; i++) {
+              const img = document.createElement("img");
+              img.src = "./resources/" + placedCards[i] + ".png"; // Image source
+              img.classList.add("placed"); // Add card class
+              img.width = 150;
+              img.height = 250;
+              
+              placedCardsContainer.appendChild(img);
+               // Add card to the container
+          }
+          
+        }
+
+            
+      
+        
+    </script>
+
+
+
+  </body>
+</html>
