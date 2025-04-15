@@ -75,6 +75,12 @@
         .card {
             margin: 10px; /* Space between cards */
         }
+        
+        #acisSpeletaji {
+          height: 300px;
+          width: 100px;
+          color: aquamarine;
+        }
 
         
 
@@ -84,10 +90,13 @@
 
     <!-- Text and Button -->
     <button type="button" onclick="displayCards()">Try it</button>
+    <button type="button" onclick="Gajiens()">Sakt speli</button>
     
     <!-- Card containers -->
     <div id="kartisUzGalda"></div>
     <div id="cardcontainer" ></div>
+
+    <div id="acisSpeletaji"></div> <!-- punktu display -->
     
 
     <script type="text/javascript" src="backend.js"></script>
@@ -98,35 +107,107 @@
 
         let cards = []; // Array for card objects
         let placedCards = [] // PRIEKS noliktam kartim
+        let placedCardsPlayer = [] // lai katrai kartij pieliktu kada speletaja vertibu
         let container = document.getElementById("cardcontainer"); // Card container element
         let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
-        
-        
-        
-       
-        function Gajiens(){
-          if(playerGajienaID == 2){
-            Bots2(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
-            placedCards.push(bot2PlacedNumber)
-            playerGajienaID=3
-            refresh()
-            Gajiens()
-          }else{
-            if(playerGajienaID == 3){
-              Bots3(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
-              placedCards.push(bot3PlacedNumber)
-              playerGajienaID = 1
-              
-              refresh()
-              GajienaUzvaretajs(placedCards)
-              Gajiens()
-              acisSumma(placedCards)
-            }
-          }
-          
+        let gajiensPecKartas = 1
 
+        
+        let punktiDiv = document.getElementById("acisSpeletaji")
+
+
+       
+
+        
+         // uzsakot speli izsauc gajienu
+        function Gajiens(){
+          setTimeout(() => {
+            if(gajiensPecKartas == 9){ // nosaka ka spele beidzas pec 9 gajieniem
+              raundaUzvaretajsParb()
+              punktiDiv.innerHTML = ""
+              punktiDiv.appendChild(document.createTextNode(raundaUzvaretajs))
+              gajiensPecKartas = 1
+            }else{  
+             
+                
+              if(placedCards.length ==3){
+                GajienaUzvaretajs(placedCards, placedCardsPlayer)
+                acisSumma(placedCards)
+                gajiensPecKartas += 1
+                console.log(placedCards)
+                console.log(placedCardsPlayer)
+                placedCards = []
+                placedCardsPlayer = []
+                placedCardsContainer.innerHTML = ""
+                
+                playerGajienaID = GajienaUzvaretajsPlayer
+                console.log(GajienaUzvaretajsPlayer)
+
+                punktiDiv.innerHTML = ""
+                punktiDiv.appendChild(document.createTextNode(playerAcis))
+                
+                Gajiens()
+              }else{
+                  
+
+                  if(playerGajienaID == 1){
+
+                    container.addEventListener("click", (event) => {              
+                      
+                      if (event.target.classList.contains("card")) {
+
+                          placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")))
+                          placedCardsPlayer.push(1)
+                          refresh()
+                          event.target.remove(); // Remove the clicked card
+                          playerGajienaID = 2 //pakustina talak gajienu pie player2s
+                          // izsauc nakama cilveka jeb bota gajienu
+                          Gajiens()
+                          return
+                          
+                        }
+                            
+                    }, { once: true })
+                    
+                  }
+                  if(playerGajienaID ==2){
+                    
+                    Bots2(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+                    placedCards.push(bot2PlacedNumber)     
+                    placedCardsPlayer.push(2)           
+                    //console.log(bot2PlacedNumber)         
+                    refresh()
+                    playerGajienaID = 3
+                    Gajiens()
+                    return 
+                  }
+
+                  if(playerGajienaID ==3){
+                    
+                    Bots3(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+                    placedCards.push(bot3PlacedNumber)
+                    placedCardsPlayer.push(3)
+                    refresh()
+                    playerGajienaID = 1
+                    Gajiens()
+                    return
+                  }
+
+
+                
+              }
         }
 
+
+        }, 200);
+        }
+
+          
+
+
+
+          
+          
         function displayCards() {
             Karsudalisana(); // Call the function from backend.js
             container.innerHTML = "";
@@ -144,33 +225,23 @@
                  // Save the card
                 container.appendChild(img); // Add card to the container
             }
+            
 
             // Handle card click
             
         }
-        
-        
-        container.addEventListener("click", (event) => {
-          if(playerGajienaID == 1){
-            clearPlacedCards()
-            if (event.target.classList.contains("card")) {
 
-                  placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")))
-                  refresh()
-                  
-                  event.target.remove(); // Remove the clicked card
-                  
-                  playerGajienaID = 2 //pakustina talak gajienu pie player2s
-                  Gajiens() // izsauc nakama cilveka jeb bota gajienu
-              }
-          }       
-        });
+        
+        
+        
+
+        
+
+
 
         function clearPlacedCards(){
           placedCards = []
         }
-
-
 
         // sakas kartis uz galda paradisana 
         function refresh() {
@@ -182,6 +253,7 @@
 
           // Loop through placedCards and add the new images
           for (let i = 0; i < placedCards.length; i++) {
+            
               const img = document.createElement("img");
               img.src = "./resources/" + placedCards[i] + ".png"; // Image source
               img.classList.add("placed"); // Add card class
@@ -190,6 +262,7 @@
               
               placedCardsContainer.appendChild(img);
                // Add card to the container
+               
           }
           
         }
