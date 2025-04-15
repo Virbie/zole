@@ -88,9 +88,13 @@
 
 
 
+
+
+
     <!-- Text and Button -->
-    <button type="button" onclick="displayCards()">Try it</button>
-    <button type="button" onclick="Gajiens()">Sakt speli</button>
+    <button id="KartisDala">Izdali kartis</button>
+    <button id="SacSpeli" style="display: none;">Sāc spēli</button>
+    <button id="velreiz" style="display:none;">Vēlreiz!~</button>
     
     <!-- Card containers -->
     <div id="kartisUzGalda"></div>
@@ -112,11 +116,31 @@
         let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
         let gajiensPecKartas = 1
 
+  
         
         let punktiDiv = document.getElementById("acisSpeletaji")
 
 
-       
+
+        const mainButton = document.getElementById('KartisDala');
+        mainButton.addEventListener('click', () => {
+          mainButton.style.display = 'none'; // Hide the button
+          secondButton.style.display= 'inline-block';
+          displayCards()
+        });
+
+        const secondButton = document.getElementById('SacSpeli');
+        secondButton.addEventListener('click', () => {
+          secondButton.style.display = 'none'; // Hide the button
+          Gajiens()
+        });
+        
+        const velreizPoga = document.getElementById('velreiz')
+        velreizPoga.addEventListener('click', () =>{
+          velreizPoga.style.display= 'none';
+          displayCards()
+          Gajiens()
+        })
 
         
          // uzsakot speli izsauc gajienu
@@ -127,6 +151,7 @@
               punktiDiv.innerHTML = ""
               punktiDiv.appendChild(document.createTextNode(raundaUzvaretajs))
               gajiensPecKartas = 1
+              velreizPoga.style.display= 'inline-block';
             }else{  
              
                 
@@ -147,6 +172,7 @@
                 punktiDiv.appendChild(document.createTextNode(playerAcis))
                 
                 Gajiens()
+                return
               }else{
                   
 
@@ -201,8 +227,68 @@
 
         }, 200);
         }
+        
+// function Gajiens(){  setTimeout(function() {
+//   if(gajiensPecKartas != 9){  // nosaka ka spele beidzas pec 9 gajieniem
+//     if(placedCards.length ==3){
+//       GajienaUzvaretajs(placedCards, placedCardsPlayer)
+//       acisSumma(placedCards)
+//       gajiensPecKartas += 1
+//       console.log(placedCards)
+//       console.log(placedCardsPlayer)
+//       placedCards = []
+//       placedCardsPlayer = []
+//       placedCardsContainer.innerHTML = ""
+      
+//       playerGajienaID = GajienaUzvaretajsPlayer
+//       console.log(GajienaUzvaretajsPlayer)
 
-          
+//       punktiDiv.innerHTML = ""
+//       punktiDiv.appendChild(document.createTextNode(playerAcis))
+//     }else{  
+//       switch (playerGajienaID){
+//         case 1:container.addEventListener("click", (event) => {              
+//           if (event.target.classList.contains("card")) {
+//               placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")))
+//               placedCardsPlayer.push(1)
+//               refresh()
+//               event.target.remove(); // Remove the clicked card
+//               playerGajienaID = 2 //pakustina talak gajienu pie player2s
+//               Gajiens()
+//               return
+//            }      
+//           }, { once: true })
+//           break;
+
+//         case 2:
+//           Bots2(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+//           placedCards.push(bot2PlacedNumber)     
+//           placedCardsPlayer.push(2)           
+//           //console.log(bot2PlacedNumber)         
+//           refresh()
+//           playerGajienaID = 3
+//           break;
+
+//         case 3:
+//           Bots3(parseInt(placedCards[0])) // partaisa vertibu uz int jo vins ir neizprotoss
+//           placedCards.push(bot3PlacedNumber)
+//           placedCardsPlayer.push(3)
+//           refresh()
+//           playerGajienaID = 1
+//           break;
+//       }
+//     }
+//     Gajiens()
+//     return
+//   }else{  
+//     raundaUzvaretajsParb()
+//     punktiDiv.innerHTML = ""
+//     punktiDiv.appendChild(document.createTextNode(raundaUzvaretajs))
+//     gajiensPecKartas = 1
+//     velreizPoga.style.display= 'inline-block';
+//   }
+// }, 500)
+// }
 
 
 
