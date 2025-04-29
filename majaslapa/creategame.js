@@ -6,11 +6,7 @@ let container = document.getElementById("cardcontainer"); // Card container elem
 let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
 let gajiensPecKartas = 1
 
-
-
 let punktiDiv = document.getElementById("acisSpeletaji")
-
-
 
 const mainButton = document.getElementById('KartisDala');
 mainButton.addEventListener('click', () => {
@@ -33,92 +29,82 @@ velreizPoga.addEventListener('click', () =>{
 })
 
 
-
-
-
-
-
-
-
 let delayGajiens = 200
+
 function Gajiens() {
-console.log("atkal")
-if (gajiensPecKartas === 9) {
-raundaUzvaretajsParb();
-punktiDiv.innerHTML = "";
-punktiDiv.appendChild(document.createTextNode(raundaUzvaretajs));
+  console.log("atkal")
+  if (gajiensPecKartas === 9) {
+    raundaUzvaretajsParb();
+    punktiDiv.innerHTML = "";
+    punktiDiv.appendChild(document.createTextNode(raundaUzvaretajs));
 
-gajiensPecKartas = 1;
-velreizPoga.style.display = 'inline-block';
-return; // No more moves
+    gajiensPecKartas = 1;
+    velreizPoga.style.display = 'inline-block';
+    return; // No more moves
+  }
+
+  if (placedCards.length === 3) {
+    GajienaUzvaretajs(placedCards, placedCardsPlayer);
+    acisSumma(placedCards);
+    gajiensPecKartas += 1;
+
+    console.log(placedCards);
+    console.log(placedCardsPlayer);
+
+    placedCards = [];
+    placedCardsPlayer = [];
+    placedCardsContainer.innerHTML = "";
+
+    playerGajienaID = GajienaUzvaretajsPlayer;
+    console.log(GajienaUzvaretajsPlayer);
+
+    punktiDiv.innerHTML = "";
+    punktiDiv.appendChild(document.createTextNode(playerAcis));
+
+    setTimeout(Gajiens, delayGajiens); // Go to next move after clearing
+    return;
+  }
+
+  switch (playerGajienaID) {
+    case 1:
+    container.addEventListener("click", function playerClick(event) {
+    if (event.target.classList.contains("card")) {
+    placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")));
+    placedCardsPlayer.push(1);
+    refresh();
+    event.target.remove();
+    playerGajienaID = 2;
+    setTimeout(Gajiens, delayGajiens); // after click, move to bot2
+    }else{
+    Gajiens()
+    }
+    }, { once: true });
+    break;
+
+    case 2:
+    Bots2(parseInt(placedCards[0])); 
+    placedCards.push(bot2PlacedNumber);
+    placedCardsPlayer.push(2);
+    refresh();
+    playerGajienaID = 3;
+    setTimeout(Gajiens, delayGajiens); // after bot2 move, move to bot3
+    break;
+
+    case 3:
+    Bots3(parseInt(placedCards[0])); 
+    placedCards.push(bot3PlacedNumber);
+    placedCardsPlayer.push(3);
+    refresh();
+    playerGajienaID = 1;
+    setTimeout(Gajiens, delayGajiens); // after bot3 move, back to player
+    break;
+  }
 }
 
-if (placedCards.length === 3) {
-GajienaUzvaretajs(placedCards, placedCardsPlayer);
-acisSumma(placedCards);
-gajiensPecKartas += 1;
 
-console.log(placedCards);
-console.log(placedCardsPlayer);
-
-placedCards = [];
-placedCardsPlayer = [];
-placedCardsContainer.innerHTML = "";
-
-playerGajienaID = GajienaUzvaretajsPlayer;
-console.log(GajienaUzvaretajsPlayer);
-
-punktiDiv.innerHTML = "";
-punktiDiv.appendChild(document.createTextNode(playerAcis));
-
-setTimeout(Gajiens, delayGajiens); // Go to next move after clearing
-return;
-}
-
-switch (playerGajienaID) {
-case 1:
-container.addEventListener("click", function playerClick(event) {
-if (event.target.classList.contains("card")) {
-  placedCards.push(parseInt(event.target.src.split("/").pop().replace(".png", "")));
-  placedCardsPlayer.push(1);
-  refresh();
-  event.target.remove();
-  playerGajienaID = 2;
-  setTimeout(Gajiens, delayGajiens); // after click, move to bot2
-}else{
-  Gajiens()
-}
-}, { once: true });
-break;
-
-case 2:
-Bots2(parseInt(placedCards[0])); 
-placedCards.push(bot2PlacedNumber);
-placedCardsPlayer.push(2);
-refresh();
-playerGajienaID = 3;
-setTimeout(Gajiens, delayGajiens); // after bot2 move, move to bot3
-break;
-
-case 3:
-Bots3(parseInt(placedCards[0])); 
-placedCards.push(bot3PlacedNumber);
-placedCardsPlayer.push(3);
-refresh();
-playerGajienaID = 1;
-setTimeout(Gajiens, delayGajiens); // after bot3 move, back to player
-break;
-}
-}
-
-
-
-  
-  
 function displayCards() {
     Karsudalisana(); // Call the function from backend.js
     container.innerHTML = "";
-    
     
     for (let i = 0; i < 8; i++) {
         
@@ -132,23 +118,14 @@ function displayCards() {
          // Save the card
         container.appendChild(img); // Add card to the container
     }
-    
-
     // Handle card click
-    
 }
-
-
-
-
-
-
-
 
 
 function clearPlacedCards(){
   placedCards = []
 }
+
 
 // sakas kartis uz galda paradisana 
 function refresh() {
@@ -156,7 +133,6 @@ function refresh() {
   placedCardsContainer.innerHTML = ""
   
   // Remove all previous images before adding new ones
-  
 
   // Loop through placedCards and add the new images
   for (let i = 0; i < placedCards.length; i++) {
@@ -168,8 +144,6 @@ function refresh() {
       img.height = 250;
       
       placedCardsContainer.appendChild(img);
-       // Add card to the container
-       
+       // Add card to the container  
   }
-  
 }

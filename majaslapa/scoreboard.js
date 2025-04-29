@@ -53,8 +53,6 @@ function GajienaUzvaretajs(value, value2){
             console.log(GajienaUzvaretajsPlayer, lielakaisI)
         }
 
-
-
         if(foundArrayName == pikis){
             let lielakais = 0;
             let lielakaisI = 0;
