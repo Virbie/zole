@@ -62,11 +62,17 @@
             margin-bottom: 100px;
             height: 300px; /* Set a specific height for the card area */
             width: 90%;
-            border: 2px solid #ccc; /* Optional: for visibility */
+            /* border: 2px solid #ccc; Optional: for visibility */
         }
 
         .card {
-            margin: 10px; /* Space between cards */
+            margin: 0;
+            width: 12%;
+            height: auto;
+            transition: transform 0.4s ease, ease-in-out;
+            cursor: pointer;
+            will-change: transform;
+            position: absolute;
         }
         
         #acisSpeletaji {
@@ -92,7 +98,6 @@
     <script type="text/javascript" src="backend.js"></script>
     <script type = "text/javascript" src="scoreboard.js"></script> <!--atsaucos uz js failu-->
     <script type = "text/javascript" src="creategame.js"></script>
-    <script type = "text/javascript" src="dizains.js"></script>
 
     <div id="footer"></div>
   </body>
