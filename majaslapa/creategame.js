@@ -14,7 +14,7 @@ mainButton.addEventListener('click', () => {
   secondButton.style.display= 'inline-block';
   displayCards()
 });
-
+//test
 const secondButton = document.getElementById('SacSpeli');
 secondButton.addEventListener('click', () => {
   secondButton.style.display = 'none'; // Hide the button
