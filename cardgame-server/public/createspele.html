@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <link rel="stylesheet" href="style.css" />
+  <script src="include_footer.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="augsa">
+      <div class="logo">
+        <img src="./resources/zolitelogo.png" alt="logo" height="40px" />
+      </div>
+      <div class="menu">
+        <button class="poga">
+          iestatijumi
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="iest">
+          <label class="switch">
+            <input type="checkbox" id="set1" />
+            <span class="slider"></span> rave
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="set2" />
+            <span class="slider"></span> set2
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="set3" />
+            <span class="slider"></span> set3
+          </label>
+        </div>
+      </div>
+      <div class="spelo">
+        <button class="poga2">
+          spēlē tagat
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="yo">
+          <a href="createspele.html" class="nospiezc">izveido spēli</a>
+          <a href="joinspele.html">pievienojies spēlei</a>
+        </div>
+      </div>
+      <div class="podzinjas">
+        <a href="index.html">sākums</a>
+        <a href="noteikumi.html">spēle</a>
+      </div>
+    </div>
+<!-- createspele.html -->
+  <h2>Izveidot jaunu istabu</h2>
+  <input type="text" id="vards" placeholder="Ievadi savu vārdu">
+  <button id="izveidot">Izveidot istabu</button>
+  <p id="rezultats"></p>
+  <script>
+    const socket = io();
+    socket.on('connect', () => console.log('🔌 Socket connected:', socket.id));
+
+    document.getElementById('izveidot').addEventListener('click', () => {
+      console.log('🖱️ Izveidot button clicked');
+      const vards = document.getElementById('vards').value.trim();
+      if (!vards) {
+        console.log('❌ Nav ievadīts vārds');
+        return alert("Ievadi vārdu!");
+      }
+      console.log('📤 Emitting izveidot-istabu with nosaukums:', vards + ' istaba');
+      socket.emit('izveidot-istabu', { nosaukums: vards + ' istaba' });
+    });
+
+    socket.on('istaba-izveidota', ({ id, nosaukums }) => {
+      console.log('📥 Received istaba-izveidota:', id, nosaukums);
+      document.getElementById('rezultats').innerText =
+        `Izveidota: ${nosaukums} (ID: ${id})`;
+      window.location = `/spele/${id}`;
+    });
+
+    socket.on('error', err => console.error('🛑 Socket error:', err));
+  </script>
+    <style>
+        /* Center the card container on the screen */
+        #cardcontainer {
+
+            display: flex; /* Enables flexbox */
+            justify-content: center; /* Horizontally centers the cards */
+            align-items: center; /* Vertically centers the cards */
+            margin-bottom: 100px;
+            height: 300px; /* Set a specific height for the card area */
+            width: 90%;
+            /* border: 2px solid #ccc; Optional: for visibility */
+        }
+
+        .card {
+            margin: 0;
+            width: 12%;
+            height: auto;
+            transition: transform 0.4s ease, ease-in-out;
+            cursor: pointer;
+            will-change: transform;
+            position: absolute;
+        }
+        
+        #acisSpeletaji {
+          height: 300px;
+          width: 100px;
+          color: aquamarine;
+        }
+
+    </style>
+
+    <!-- Text and Button -->
+    <button id="KartisDala">Izdali kartis</button>
+    <button id="SacSpeli" style="display: none;">Sāc spēli</button>
+    <button id="velreiz" style="display:none;">Vēlreiz!~</button>
+    
+    <!-- Card containers -->
+    <div id="kartisUzGalda"></div>
+    <div id="cardcontainer" ></div>
+
+    <div id="acisSpeletaji"></div> <!-- punktu display -->
+    
+
+    <script type="text/javascript" src="backend.js"></script>
+    <script type = "text/javascript" src="scoreboard.js"></script> <!--atsaucos uz js failu-->
+    <script type = "text/javascript" src="creategame.js"></script>
+    <div id="footer"></div>
+  </body>
+</html>
