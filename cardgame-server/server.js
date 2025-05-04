@@ -1,3 +1,4 @@
+//serveris kinda
 const express = require('express');
 const app     = express();
 const http    = require('http').createServer(app);
@@ -9,7 +10,7 @@ const deletionTimers = {};
 
 app.use(express.static('public'));
 
-// Serve the same frontend for any /spele/:istabaID URL
+// ta pati lapa visiem /spele/istabaID
 app.get('/spele/:istabaID', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'spele.html'));
 });
@@ -36,7 +37,7 @@ io.on('connection', (socket) => {
     console.log(`Izveidota istaba: ${nosaukums} (${id})`);
   });
 
-  // Someone (creator or guest) visits /spele/:id
+  // kads iet uz /spele/istabaID
   socket.on('spele-page-load', (id) => {
     const istaba = istabas[id];
     if (!istaba) return socket.emit('kļūda', 'Istaba neeksistē');
@@ -48,7 +49,7 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Join room on demand
+  // pievienojies istabai
   socket.on('pievienoties-istabai', (id) => {
     const istaba = istabas[id];
     if (!istaba) return socket.emit('kļūda', 'Istaba neeksistē');
@@ -68,9 +69,9 @@ io.on('connection', (socket) => {
     });
   });
 
-    // Ātrai pārbaudei: viegls čats istabā
+    // čatiņš testam
     socket.on('chat-msg', ({ istabaID, ziņojums }) => {
-      // vienkārši broadcast uz visu istabu
+      // bļauj pa istabu
       io.to(istabaID).emit('chat-msg', {
         from: socket.id,
         ziņojums,
@@ -102,7 +103,7 @@ io.on('connection', (socket) => {
     }
   });
 
-}); // ← Properly close io.on('connection', ...)
+}); 
 
 http.listen(3000, () => {
   console.log('Serveris darbojas: http://localhost:3000');
