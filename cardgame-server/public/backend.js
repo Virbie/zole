@@ -365,5 +365,5 @@ function Karsudalisana(){
     return kartis
     
 }
-// beigas karsu dalisanai
+// beigas karsu dalisanaj
 
