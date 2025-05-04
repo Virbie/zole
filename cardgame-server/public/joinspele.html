@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pievienoties spēlei</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></script>
+  <!-- Include Socket.IO once, before any code that uses it -->
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="augsa">
+    <div class="logo">
+      <img src="./resources/zolitelogo.png" alt="logo" height="40">
+    </div>
+    <div class="menu">
+      <button class="poga">iestatijumi <i class="fa fa-caret-down"></i></button>
+      <div class="iest">
+        <label class="switch">
+          <input type="checkbox" id="set1"><span class="slider"></span> rave
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="set2"><span class="slider"></span> set2
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="set3"><span class="slider"></span> set3
+        </label>
+      </div>
+    </div>
+    <div class="spelo">
+      <button class="poga2">spēlē tagad <i class="fa fa-caret-down"></i></button>
+      <div class="yo">
+        <a href="createspele.html">izveido spēli</a>
+        <a href="joinspele.html" class="nospiezc">pievienojies spēlei</a>
+      </div>
+    </div>
+    <div class="podzinjas">
+      <a href="index.html">sākums</a>
+      <a href="noteikumi.html">spēle</a>
+    </div>
+  </div>
+
+  <h2>Pieejamās istabas</h2>
+  <ul id="istabu-saraksts"></ul>
+
+  <script>
+    const socket  = io();
+    const saraksts = document.getElementById('istabu-saraksts');
+
+    // Fetch and rebuild the room list
+    function atjauno() {
+      socket.emit('dabut-istabas');
+    }
+    atjauno();
+    setInterval(atjauno, 5000); // refresh every 5s
+
+    // When we get the room map, rebuild the buttons
+    socket.on('atjaunot-istabas', (istabas) => {
+      saraksts.innerHTML = '';
+      for (const id in istabas) {
+        const li   = document.createElement('li');
+        const btn  = document.createElement('button');
+        btn.innerText = `Pievienoties: ${istabas[id].nosaukums}`;
+        btn.onclick   = () => socket.emit('pievienoties-istabai', id);
+        li.appendChild(btn);
+        saraksts.appendChild(li);
+      }
+    });
+
+    // On successful join, alert + redirect
+    socket.on('pievienots', ({ id, nosaukums }) => {
+      alert(`Pievienots: ${nosaukums} (${id})`);
+      window.location.href = `/spele/${id}`;
+    });
+
+    socket.on('kļūda', msg => alert(msg));
+  </script>
+
+  <script src="include_footer.js"></script>
+  <div id="footer"></div>
+</body>
+</html>

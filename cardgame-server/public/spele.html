@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Istaba</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body { font-family: sans-serif; }
+    #dalibnieki { margin-top: 20px; }
+    #joinBtn { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Istaba: <span id="istabaID"></span></h2>
+  <h3 id="roomName"></h3>
+
+  <!-- Join button: hidden once you’re a member -->
+  <button id="joinBtn">Pievienoties istabai</button>
+
+  <h3>Dalībnieki:</h3>
+  <ul id="dalibnieki"></ul>
+
+  <h3>Čats</h3>
+  <div id="čats-log" style="border:1px solid #ccc; height:150px; overflow:auto; padding:5px;"></div>
+  <input type="text" id="čats-ievade" placeholder="Raksti ziņojumu…" />
+  <button id="čats-sūtīt">Sūtīt</button>
+
+  <script>
+    const socket = io();
+    const istabaID = location.pathname.split('/').pop();
+    document.getElementById('istabaID').innerText = istabaID;
+
+    const joinBtn = document.getElementById('joinBtn');
+    const nameH3 = document.getElementById('roomName');
+    const ul = document.getElementById('dalibnieki');
+
+    // Ask server for room info when page loads
+    socket.emit('spele-page-load', istabaID);
+
+    // Room “stats” arrives: name, creator, current members
+    socket.on('istabas-stats', ({ nosaukums, izveidotajs, dalibnieki }) => {
+      nameH3.innerText = nosaukums;
+      updateMembers(dalibnieki);
+
+      // Hide join button if I’m already in the room
+      if (dalibnieki.includes(socket.id)) {
+        joinBtn.style.display = 'none';
+      } else {
+        joinBtn.style.display = 'inline-block';
+      }
+    });
+
+    // Click to join
+    joinBtn.addEventListener('click', () => {
+      socket.emit('pievienoties-istabai', istabaID);
+    });
+
+    // Confirmation of join
+    socket.on('pievienots', () => {
+      joinBtn.style.display = 'none';
+    });
+    socket.on('pievienots', (data) => {
+  console.log('🎉 pieveinots event data:', data);
+  // Now that you know exactly what’s arriving, format your alert:
+  const msg = data.nosaukums
+    ? `Pievienots: ${data.nosaukums} (${data.id})`
+    : `Pievienots: ${data.id}`;
+  alert(msg);
+  joinBtn.style.display = 'none';
+});
+
+    // Whenever someone joins, update the list
+    socket.on('jauns-dalibnieks', ({ dalibnieki }) => {
+      updateMembers(dalibnieki);
+    });
+
+    // Error handling
+    socket.on('kļūda', msg => alert(msg));
+
+    function updateMembers(list) {
+      ul.innerHTML = '';
+      list.forEach((sid, idx) => {
+        const li = document.createElement('li');
+        li.innerText = `Anonīms #${idx+1}` + (sid === izveidotajs ? ' (Īpašnieks)' : '');
+        ul.appendChild(li);
+      });
+      // Čats UI elementi
+const čatsLog    = document.getElementById('čats-log');
+const čatsIevade = document.getElementById('čats-ievade');
+const čatsPoga   = document.getElementById('čats-sūtīt');
+
+// Sūtīt ziņojumu uz serveri
+čatsPoga.addEventListener('click', () => {
+  const txt = čatsIevade.value.trim();
+  if (!txt) return;
+  socket.emit('chat-msg', { istabaID, ziņojums: txt });
+  čatsIevade.value = '';
+});
+
+// Saņemt ziņojumu no servera un ielogot
+socket.on('chat-msg', ({ from, ziņojums, laiks }) => {
+  const rinda = document.createElement('div');
+  // Pārveido socket.id uz anonīmu #n, ja vēlies
+  rinda.innerText = `${from}: ${ziņojums}`;
+  čatsLog.appendChild(rinda);
+  // Scroll uz leju
+  čatsLog.scrollTop = čatsLog.scrollHeight;
+});
+socket.on('pievienots', () => {
+    console.log('Pievienojies istabai', istabaID);
+  });
+    }
+  </script>
+</body>
+</html>
