@@ -3,7 +3,7 @@
   --balts: #ffffff;
   --bg: #000000;
   --bg2: #1b1b1b;
-  --blak: black;
+  --blak: #000000;
   --gray: #ccc;
   --gray1: #ddd;
   --gray2: #3c3c3c;
@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  font-family: "comic sans ms", cursive, sans-serif;
+  font-family: "comic sans ms", sans-serif;
   background-color: var(--bg);
 }
 
@@ -254,4 +254,94 @@ box-sizing: border-box;
     width: 100%;
     height: auto;
   }
+}
+
+.room-title {
+  float: left;
+  color: var(--balts);
+  font-size: 20px;
+  line-height: 55px;
+}
+
+/* — Participants List Top‑Left — */
+.participants-list {
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  z-index: 500;
+}
+
+/* — Main Content Override — */
+.room-content {
+  margin-left: 200px;
+  padding-top: 60px;
+}
+
+/* — Chat Widget — */
+#chat-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 200px;
+  height: 40px;
+  background-color: var(--bg2);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: width 0.3s ease, height 0.3s ease;
+  z-index: 1000;
+}
+#chat-container.expanded {
+  width: 300px;
+  height: 200px;
+}
+#chat-log {
+  display: none;
+  height: 140px;
+  overflow-y: auto;
+  padding: 5px;
+  color: var(--balts);
+  font-size: 14px;
+}
+#chat-container.expanded #chat-log {
+  display: block;
+}
+#chat-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--gray1);
+  border-radius: 4px;
+  font-family: inherit;
+}
+/* Unread indicator – thicker red border */
+#chat-input.unread {
+  border: 4px solid var(--red);
+}
+
+.rave-text {
+  animation: raveText 0.2s infinite;
+}
+
+@keyframes raveText {
+  0% { color: red; transform: rotate(0deg) scale(1); }
+  25% { color: yellow; transform: rotate(5deg) scale(1.15); }
+  50% { color: lime; transform: rotate(-5deg) scale(1.25); }
+  75% { color: blue; transform: rotate(3deg) scale(1.15); }
+  100% { color: magenta; transform: rotate(0deg) scale(1); }
+}
+
+.rave-image {
+  animation: raveImage 0.2s infinite;
+}
+
+@keyframes raveImage {
+  0% { transform: rotate(360deg) scale(1); }
+  12.5% { transform: rotate(45deg) scale(0.8); }
+  25% { transform: rotate(90deg) scale(0.5); }
+  37.5% { transform: rotate(135deg) scale(0.8); }
+  50% { transform: rotate(180deg) scale(1); }
+  62.5% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(225deg) scale(1.5); }
+  87.5% { transform: rotate(270deg) scale(1.2); }
+  100% { transform: rotate(315deg) scale(1); }
 }

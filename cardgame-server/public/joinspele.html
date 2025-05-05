@@ -2,33 +2,39 @@
 <html lang="lv">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pievienoties spēlei</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></script>
-  <!-- Include Socket.IO once, before any code that uses it -->
-  <script src="/socket.io/socket.io.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
 </head>
 <body>
   <div class="augsa">
     <div class="logo">
-      <img src="./resources/zolitelogo.png" alt="logo" height="40">
+      <img  src="./resources/zolitelogo.png" alt="logo" height="40px" />
     </div>
     <div class="menu">
-      <button class="poga">iestatijumi <i class="fa fa-caret-down"></i></button>
+      <button class="poga">
+        iestatījumi <i class="fa fa-caret-down"></i>
+      </button>
       <div class="iest">
         <label class="switch">
-          <input type="checkbox" id="set1"><span class="slider"></span> rave
+          <input type="checkbox" id="set1" /><span class="slider"></span> rave
         </label>
         <label class="switch">
-          <input type="checkbox" id="set2"><span class="slider"></span> set2
+          <input type="checkbox" id="set2" /><span class="slider"></span> light mode
         </label>
         <label class="switch">
-          <input type="checkbox" id="set3"><span class="slider"></span> set3
+          <input type="checkbox" id="set3" /><span class="slider"></span> barbie
         </label>
       </div>
     </div>
     <div class="spelo">
-      <button class="poga2">spēlē tagad <i class="fa fa-caret-down"></i></button>
+      <button class="poga2">
+        spēlē tagad <i class="fa fa-caret-down"></i>
+      </button>
       <div class="yo">
         <a href="createspele.html">izveido spēli</a>
         <a href="joinspele.html" class="nospiezc">pievienojies spēlei</a>
@@ -36,47 +42,79 @@
     </div>
     <div class="podzinjas">
       <a href="index.html">sākums</a>
-      <a href="noteikumi.html">spēle</a>
+      <a href="noteikumi.html">Noteikumi</a>
     </div>
   </div>
 
-  <h2>Pieejamās istabas</h2>
-  <ul id="istabu-saraksts"></ul>
+  <!-- Main Content -->
+  <div class="content">
+    <h2 class="tekstinjs">Pieejamās istabas</h2>
+    <div id="rooms" class="sigma">
+      <!-- Rooms will be injected here as a list -->
+    </div>
+    <p id="no-rooms" class="tekstinjs" style="display:none;">
+      Šobrīd nav pieejamu istabu.
+    </p>
+  </div>
 
-  <script>
-    const socket  = io();
-    const saraksts = document.getElementById('istabu-saraksts');
-
-    // Fetch and rebuild the room list
-    function atjauno() {
-      socket.emit('dabut-istabas');
-    }
-    atjauno();
-    setInterval(atjauno, 5000); // refresh every 5s
-
-    // When we get the room map, rebuild the buttons
-    socket.on('atjaunot-istabas', (istabas) => {
-      saraksts.innerHTML = '';
-      for (const id in istabas) {
-        const li   = document.createElement('li');
-        const btn  = document.createElement('button');
-        btn.innerText = `Pievienoties: ${istabas[id].nosaukums}`;
-        btn.onclick   = () => socket.emit('pievienoties-istabai', id);
-        li.appendChild(btn);
-        saraksts.appendChild(li);
-      }
-    });
-
-    // On successful join, alert + redirect
-    socket.on('pievienots', ({ id, nosaukums }) => {
-      alert(`Pievienots: ${nosaukums} (${id})`);
-      window.location.href = `/spele/${id}`;
-    });
-
-    socket.on('kļūda', msg => alert(msg));
-  </script>
-
-  <script src="include_footer.js"></script>
+  <!-- Footer -->
   <div id="footer"></div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="include_footer.js"></script>
+  <script>
+    const socket = io();
+    const roomsDiv = document.getElementById('rooms');
+    const noRooms  = document.getElementById('no-rooms');
+
+    // Initial fetch
+    socket.emit('dabut-istabas');
+
+    // Re-fetch every 5 seconds
+    setInterval(() => {
+      socket.emit('dabut-istabas');
+    } , 500);
+
+    socket.on('atjaunot-istabas', rooms => {
+      roomsDiv.innerHTML = '';
+      const entries = Object.entries(rooms);
+      if (entries.length === 0) {
+        noRooms.style.display = 'block';
+        return;
+      }
+      noRooms.style.display = 'none';
+
+      entries.forEach(([id, info]) => {
+        const roomCard = document.createElement('div');
+        roomCard.className = 'sigma';
+        roomCard.style.margin = '10px 0';
+
+        const txt = document.createElement('div');
+        txt.className = 'tekstinjs';
+        txt.innerHTML = `<h4>${info.nosaukums}</h4><p>ID: ${id}</p>`;
+
+        const btnWrapper = document.createElement('div');
+        btnWrapper.className = 'bilde';
+        btnWrapper.style.display = 'flex';
+        btnWrapper.style.alignItems = 'center';
+        btnWrapper.style.justifyContent = 'center';
+
+        const btn = document.createElement('button');
+        btn.className = 'poga2';
+        btn.innerText = 'Pievienoties';
+        btn.addEventListener('click', () => {
+          window.location.href = `/spele/${id}`;
+        });
+
+        btnWrapper.appendChild(btn);
+        roomCard.appendChild(txt);
+        roomCard.appendChild(btnWrapper);
+        roomsDiv.appendChild(roomCard);
+      });
+    });
+
+    socket.on('kļūda', msg => alert('Kļūda: ' + msg));
+  </script>
 </body>
 </html>
