@@ -98,8 +98,7 @@
 
         </div>
       </div>
-    </div>          
-    <div id="footer"></div>
+    </div>
         <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -112,5 +111,6 @@
             document.getElementById('log').innerHTML += `<p>Opponent played: ${data.card}</p>`;
         });
     </script>
+    <div id="footer"></div>
   </body>
 </html>
