@@ -77,16 +77,18 @@
     <div id="kartisUzGalda"></div>
     <div id="cardcontainer" ></div>
 
-    <div id="acisSpeletaji"></div> <!-- punktu display -->
-    
-
-
-    <script type="text/javascript" src="/backend.js"></script><!--atsaucos uz js failu-->
-    
+    <button onclick="restartGame()">Restart Game</button>
+    <div id="acisSpeletaji" style="width:100px; height:100px; background-color:pink;"></div> <!-- punktu display -->
+    <div id="scoreboard" style="width:300px; height:100px; background-color:yellowgreen;"></div>
 
 
     
-    <!-- Scripts -->
+    <script type="text/javascript" src="/backend.js"></script>
+
+
+
+    
+    
     <script src="/socket.io/socket.io.js"></script>
     <script>
       let cards = []; // Array for card objects
@@ -94,10 +96,10 @@
       let placedCardsPlayer = [] // lai katrai kartij pieliktu kada speletaja vertibu
       let container = document.getElementById("cardcontainer"); // Card container element
       let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
-      let gajiensPecKartas = 1
+      
 
       let punktiDiv = document.getElementById('acisSpeletaji')
-
+      let scoreboardDiv = document.getElementById('scoreboard')
 
 
       const socket        = io();
@@ -385,6 +387,7 @@
       }
 
       let playerGajiens = 1
+      let gajiensPecKartas = 1
       let mansPlayerId = null;//sakuma speles kods
       let dalitajs = 0 // pasaka vai kartis speles sakuma jau izdalitas vai ne
       socket.on('player-id', ({ playerId }) => {
@@ -404,8 +407,9 @@
         setTimeout(Spele, delayGajiens);
       });
 
-      socket.on('updatedUzvaretajs',GajUzvaretajs =>{
+      socket.on('updatedUzvaretajs',({GajUzvaretajs, punkti}) =>{
           playerGajiens = GajUzvaretajs; 
+          punktiDiv.textContent = punkti
         })
 
 
@@ -414,67 +418,95 @@
 
 
       function Spele(){
-        if(dalitajs == 0){
-          
-          if(mansPlayerId == 1){
-            
-            socket.emit('spelesSakums', {istabaID})
-            
+        if(gajiensPecKartas == 9){
+          if(mansPlayerId ==1 ){
+            raundaUzvaretajsParb()
+            let html = '';
+            for (let player in scoreboard) {
+                let { lieliePunkti, maziePunkti } = scoreboard[player];
+                html += `<div><strong>${player}:</strong> Lielie: ${lieliePunkti}, Mazie: ${maziePunkti}</div>`;
+            }
+            // Inject into the div
+            scoreboardDiv.innerHTML = html;
+            return
           }
         }else{
-          if (placedCards.length === 3) {
-            if(mansPlayerId ==1){
+          console.log(gajiensPecKartas)
+          console.log(dalitajs)
+          if(dalitajs == 0){
+            if(mansPlayerId == 1){
+              console.log("aiaibfaliukgfrbailukgbilfkajb")
+              socket.emit('spelesSakums', {istabaID})
               
-              const GajUzvaretajs = GajienaUzvaretajs(placedCards, placedCardsPlayer);
-              console.log(placedCardsPlayer)
-              
-              socket.emit('gajienaUzvaretajs', { istabaID, GajUzvaretajs });
-            }     
-            
-            gajiensPecKartas += 1;
-            placedCards = [];
-            placedCardsPlayer = [];
-            placedCardsContainer.innerHTML = "";
-
-            
-            setTimeout(Spele, delayGajiens);
-            console.log(playerGajiens)
-            return
-            
-          }else{
-            
-            console.log(mansPlayerId, playerGajiens)
-            if(mansPlayerId == playerGajiens ){
-
-              console.log("strada")
-              container.addEventListener("click", function playerClick(event) {
-              if (event.target.classList.contains("card")) {
-                const kartsVertiba = parseInt(event.target.src.split("/").pop().replace(".png", ""));
-                // norada kurs nolika karti
-                
-                event.target.remove();
-                arrangeCardsInArc();
-
-                const jaunais = playerGajiens+1
-                socket.emit('updateX', { istabaID, jaunais, kartsVertiba, mansPlayerId});
-                refresh();
-                setTimeout(Spele, delayGajiens);
-
-              }else{
-              Spele()
-              }
-              }, { once: true });
-              return
             }
-          setTimeout(Spele, delayGajiens);
-          return
+          }else{
+            if (placedCards.length === 3) {
+              if(mansPlayerId ==1){
+                console.log(pikis)
+                console.log(placedCards)
+                console.log(placedCardsPlayer)
+                const GajUzvaretajs = GajienaUzvaretajs(placedCards, placedCardsPlayer);
+                
+                
+                const punkti = acisSumma(placedCards, GajUzvaretajs)
+                console.log(punkti)
+                gajiensPecKartas++
+                socket.emit('gajienaUzvaretajs', { istabaID, GajUzvaretajs, punkti});
+              }     
+              
+              
+              placedCards = [];
+              placedCardsPlayer = [];
+              placedCardsContainer.innerHTML = "";
+
+              setTimeout(Spele, delayGajiens);
+              return
+              
+            }else{
+              
+              console.log(mansPlayerId, playerGajiens)
+              if(mansPlayerId == playerGajiens ){
+
+                console.log("strada")
+                container.addEventListener("click", function playerClick(event) {
+                if (event.target.classList.contains("card")) {
+                  const kartsVertiba = parseInt(event.target.src.split("/").pop().replace(".png", ""));
+                  // norada kurs nolika karti
+                  
+                  event.target.remove();
+                  arrangeCardsInArc();
+
+                  const jaunais = playerGajiens+1
+                  socket.emit('updateX', { istabaID, jaunais, kartsVertiba, mansPlayerId});
+                  refresh();
+                  setTimeout(Spele, delayGajiens);
+
+                }else{
+                Spele()
+                }
+                }, { once: true });
+                return
+              }
+            setTimeout(Spele, delayGajiens);
+            return
+            }
+            
           }
-          
         }
         
+        
       }
-    
-  
+
+    function restartGame(){
+      socket.emit('restartGame')
+    }
+    socket.on('restartedGameValues',({gajiensPK, dalitajsRefresh, acis})=>{
+      gajiensPecKartas = gajiensPK
+      dalitajs = dalitajsRefresh
+      playerAcis = acis
+      Spele()
+
+    });
 
 
       
@@ -483,6 +515,7 @@
     document.getElementById('updateButton').addEventListener('click', () => {
 
       Spele()
+      document.getElementById('acisSpeletaji').style.display = 'none';
     });
 
 

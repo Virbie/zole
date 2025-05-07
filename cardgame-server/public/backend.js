@@ -7,13 +7,21 @@
     let pikis = [5,6,7,8]
     let sirsnina = [9,10,11,12]
 
+
+    let acis = [0, 4, 10, 11, 0, 4, 10, 11, 0, 4, 10, 11, 0, 0, 0, 4, 10, 11, 2, 2, 2, 2, 3, 3, 3, 3];
+    let playerAcis = [0, 0, 0];  // player 1, 2, 3
+    let raundaUzvaretajs = "";
     
-    
+    let scoreboard = {
+        player1Scoreboard: {lieliePunkti:0, maziePunkti:0},
+        player2Scoreboard: {lieliePunkti:0, maziePunkti:0},
+        player3Scoreboard: {lieliePunkti:0, maziePunkti:0},
+    }
 
     
     
 
-    let foundArrayName = 0;
+    
     
 
     // Sākums karsu dalisanai
@@ -75,6 +83,7 @@ function GajienaUzvaretajs(value, value2){
     if(value.length === 3){
 
         const arrays = [kreicis, pikis, sirsnina, trumpe];
+        let foundArrayName = 0;
 
         let GajienaUzvaretajsPlayer = 0 // let kas pasaka kurs uzveraja konkretu gajienu
         console.log(value2)
@@ -171,25 +180,20 @@ function GajienaUzvaretajs(value, value2){
 
 
 // ✅ First, declare your variables
-let acis = [0, 4, 10, 11, 0, 4, 10, 11, 0, 4, 10, 11, 0, 0, 0, 4, 10, 11, 2, 2, 2, 2, 3, 3, 3, 3];
-let playerAcis = [0, 0, 0];  // player 1, 2, 3
-let raundaUzvaretajs = "";
+
 
 // ✅ Then, define the function
 function acisSumma(value, value2) {
     
   for (let i = 0; i < value.length; i++) {
-    playerAcis[value2 - 1] += acis[value[i] - 1];
+    playerAcis[value2 - 1] += acis[value[i] - 1]; 
   }
+  return playerAcis
 }
 
 
 
-    let scoreboard = {
-        player1Scoreboard: {lieliePunkti:0, maziePunkti:0},
-        player2Scoreboard: {lieliePunkti:0, maziePunkti:0},
-        player3Scoreboard: {lieliePunkti:0, maziePunkti:0},
-    }
+    
 
 
 
@@ -219,7 +223,7 @@ function raundaUzvaretajsParb(){
         scoreboard["player" + i + "Scoreboard"].maziePunkti += playerAcis[i-1];
     }
 
-    playerAcis = ""
+    playerAcis = []
     console.log(scoreboard)
     
     

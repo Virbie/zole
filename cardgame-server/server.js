@@ -166,8 +166,7 @@ io.on('connection', (socket) => {
 
 
   socket.on('updateX', ({ istabaID, jaunais, kartsVertiba,mansPlayerId }) => {//maina dalitaju placedCards
-    console.log("sagaja")
-    console.log(jaunais)
+    
     console.log(kartsVertiba)
     if(jaunais == 4){
       jaunais = 1
@@ -176,12 +175,19 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('gajienaUzvaretajs', ({ istabaID, GajUzvaretajs }) => {
+  socket.on('gajienaUzvaretajs', ({ istabaID, GajUzvaretajs, punkti }) => {
     console.log("Winner received:", GajUzvaretajs);
-    io.to(istabaID).emit('updatedUzvaretajs', GajUzvaretajs); // Emit to the room using istabaID
+    io.to(istabaID).emit('updatedUzvaretajs', {GajUzvaretajs, punkti}); // Emit to the room using istabaID
   });
   
 
+
+  socket.on('restartGame', ()=>{
+    const gajiensPK = 1
+    const dalitajsRefresh = 0
+    const acis = [0,0,0]
+    socket.emit('restartedGameValues', {gajiensPK, dalitajsRefresh,acis})
+  })
 
 }); 
 
