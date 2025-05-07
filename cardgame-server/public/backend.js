@@ -170,15 +170,19 @@ function GajienaUzvaretajs(value, value2){
 
 
 
-    let acis = [0,4,10,11,0,4,10,11,0,4,10,11,0,0,0,4,10,11,2,2,2,2,3,3,3,3]
-    let playerAcis = [0,0,0]  // pirma pakape ir player1 utt
-    let raundaUzvaretajs = ""
+// ✅ First, declare your variables
+let acis = [0, 4, 10, 11, 0, 4, 10, 11, 0, 4, 10, 11, 0, 0, 0, 4, 10, 11, 2, 2, 2, 2, 3, 3, 3, 3];
+let playerAcis = [0, 0, 0];  // player 1, 2, 3
+let raundaUzvaretajs = "";
+
+// ✅ Then, define the function
+function acisSumma(value, value2) {
     
-function acisSumma(value){
-    for(let i = 0; i<value.length;i++){
-        playerAcis[GajienaUzvaretajsPlayer-1] += acis[value[i]-1]
-    }
+  for (let i = 0; i < value.length; i++) {
+    playerAcis[value2 - 1] += acis[value[i] - 1];
+  }
 }
+
 
 
     let scoreboard = {
