@@ -1,4 +1,5 @@
 //serveris kinda
+
 const express = require('express');
 const app     = express();
 const http    = require('http').createServer(app);
@@ -56,7 +57,22 @@ io.on('connection', (socket) => {
     if (!istaba.soketi.includes(socket.id)) {
       istaba.soketi.push(socket.id);
       socket.join(id);
-    }
+
+      const izmantotieId = Object.values(istaba.playerMap || {});
+      let nextId = 1;
+      while (izmantotieId.includes(nextId)) {
+      nextId++;
+      }
+
+      if (nextId > 3) {
+        return socket.emit('kļūda', 'Istaba ir pilna');
+      }
+  
+      // Pievienojam playerId mapē
+      if (!istaba.playerMap) istaba.playerMap = {};
+        istaba.playerMap[socket.id] = nextId;
+      }
+
     if (deletionTimers[id]) {
       clearTimeout(deletionTimers[id]);
       delete deletionTimers[id];
@@ -66,7 +82,13 @@ io.on('connection', (socket) => {
     socket.emit('pievienots', {
       id,
       nosaukums: istaba.nosaukums
+      
     });
+
+    socket.emit('player-id', {
+      playerId: istaba.playerMap[socket.id]
+    });
+
   });
 
     // čatiņš testam
@@ -102,6 +124,64 @@ io.on('connection', (socket) => {
       }
     }
   });
+
+
+
+
+  const backend = require('./public/backend');
+
+  socket.on('spelesSakums', ({ istabaID })=>{
+    const istaba = istabas[istabaID];
+
+    if (!istaba) {
+      console.log(`Istaba ar ID ${istabaID} netika atrasta`);
+      return;
+    }
+
+    if (istaba.soketi.length === 3) {
+      console.log("aaa")
+      const kartes = backend.Karsudalisana();  // Izsaucam backend funkciju
+      console.log("aaassssssss")
+      
+      console.log(kartes)
+      let dalitajsRefresh = 1
+      // Nosūtām katram spēlētājam viņu kartes
+      io.to(istaba.soketi[0]).emit('kartes-dati', {
+        kartes: kartes.playerG1,
+        dalitajsRefresh: dalitajsRefresh
+      });
+      
+      io.to(istaba.soketi[1]).emit('kartes-dati', {
+        kartes: kartes.playerG2,
+        dalitajsRefresh: dalitajsRefresh
+      });
+      
+      io.to(istaba.soketi[2]).emit('kartes-dati', {
+        kartes: kartes.playerG3,
+        dalitajsRefresh: dalitajsRefresh
+      });
+      
+    }
+  })
+
+
+  socket.on('updateX', ({ istabaID, jaunais, kartsVertiba,mansPlayerId }) => {//maina dalitaju placedCards
+    console.log("sagaja")
+    console.log(jaunais)
+    console.log(kartsVertiba)
+    if(jaunais == 4){
+      jaunais = 1
+    }
+    io.to(istabaID).emit('updatedGajiens', {jaunais, kartsVertiba,mansPlayerId});  // Emit updated value to all clients in the room
+  });
+
+
+  socket.on('gajienaUzvaretajs', ({ istabaID, GajUzvaretajs }) => {
+    console.log("Winner received:", GajUzvaretajs);
+    io.to(istabaID).emit('updatedUzvaretajs', GajUzvaretajs); // Emit to the room using istabaID
+  });
+  
+
 
 }); 
 
