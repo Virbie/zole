@@ -201,6 +201,11 @@ input:checked+.slider:before {
   font-weight: bolder;
 }
 
+.pookie {
+  color: var(--balts);
+  font-weight: bolder;
+}
+
 .sigma {
   display: flex;
   overflow: hidden;
@@ -357,3 +362,48 @@ box-sizing: border-box;
   text-align: center;
   font-weight: bolder;
 }
+
+/* === Button Base Styles === */
+.button{
+  display: inline-block;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--balts);
+  text-decoration: none;
+  text-align: center;
+  background-color: var(--gray2); /* match header links */
+  border: none;
+  margin-top: 30px;
+  padding: 0.6em 1.2em;
+  border-radius: 1.5em; /* more rounded */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.button:hover{
+  background-color: var(--red);
+  transform: translateY(-1px);
+}
+
+.button:active{
+  background-color: var(--pink);
+  transform: translateY(0);
+}
+
+/* === Score & Chat Containers === */
+.scoreboard, #acisSpeletaji {
+  background-color: var(--accent-bg, var(--gray2)); /* adapt to site variables */
+  border: 2px solid var(--red);
+  border-radius: 0.8em;
+  padding: 0.8em;
+  margin-top: 10px;
+  font-family: inherit;
+  color: var(--balts);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-width: 300px;
+}
+
+/* === Utility Classes === */
+.hidden { display: none !important; }

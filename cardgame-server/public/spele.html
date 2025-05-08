@@ -53,12 +53,11 @@
 
     <!-- Main Content -->
     <div class="content room-content">
-      <button id="joinBtn" class="poga2">Pievienoties istabai</button>
+      <button id="joinBtn" class="button">Pievienoties istabai</button>
     </div>
 
 
 
-    <div id="updateButton" style="width:100px; height:100px; background-color:blue;"></div>
     <div id="textW"></div>
 
 
@@ -76,13 +75,13 @@
     <!-- Card containers -->
     <div id="kartisUzGalda"></div>
     <div id="cardcontainer" ></div>
+    <h3 style="color: var(--balts);">Punkti spēlē</h3>
+    <div id="acisSpeletaji" class="scoreboard"></div> <!-- punktu display -->
+    <h3 style="color: var(--balts);">Punkti kopā</h3>
+    <div id="scoreboard" class="scoreboard"></div>
+    <button class="button" id="restartBTT" onclick="restartGame()">Start</button>
+    <div id ="tavsGajiens" style="background-color: aquamarine;width: 400px; height: 200px; display: none;"></div>
 
-    <button onclick="restartGame()">Restart Game</button>
-    <div id="acisSpeletaji" style="width:100px; height:100px; background-color:pink;"></div> <!-- punktu display -->
-    <div id="scoreboard" style="width:300px; height:100px; background-color:yellowgreen;"></div>
-
-
-    
     <script type="text/javascript" src="/backend.js"></script>
 
 
@@ -130,6 +129,12 @@
       socket.on('jauns-dalibnieks', ({ dalibnieki }) => {
         updateMembers(dalibnieki);
       });
+
+      socket.on("chat_message", (message) => {
+  const p = document.createElement("p");
+  p.textContent = message;
+  document.getElementById("chat").appendChild(p);
+});
 
       socket.on('chat-msg', ({ from, ziņojums }) => {
         const line = document.createElement('div');
@@ -393,6 +398,9 @@
       socket.on('player-id', ({ playerId }) => {
         mansPlayerId = playerId;
         console.log('Mans Player ID:', mansPlayerId);
+        if (mansPlayerId != 1){
+          document.getElementById("restartBTT").style.display = "none";
+        }
 
         // Tu vari tagad izmantot šo playerId visur
       });
@@ -410,6 +418,8 @@
       socket.on('updatedUzvaretajs',({GajUzvaretajs, punkti}) =>{
           playerGajiens = GajUzvaretajs; 
           punktiDiv.textContent = punkti
+          gajiensPecKartas++
+          console.log(gajiensPecKartas, "onsnsnsnnsnsns")
         })
 
 
@@ -418,26 +428,29 @@
 
 
       function Spele(){
+        console.log("sasniedza mani")
+        console.log(gajiensPecKartas, dalitajs, playerAcis)
+        document.getElementById("restartBTT").style.display = "none";
+        document.getElementById("restartBTT").value = "Restart";
         if(gajiensPecKartas == 9){
           if(mansPlayerId ==1 ){
+            document.getElementById("restartBTT").style.display = "inline-block";
             raundaUzvaretajsParb()
             let html = '';
             for (let player in scoreboard) {
                 let { lieliePunkti, maziePunkti } = scoreboard[player];
                 html += `<div><strong>${player}:</strong> Lielie: ${lieliePunkti}, Mazie: ${maziePunkti}</div>`;
-            }
-            // Inject into the div
-            scoreboardDiv.innerHTML = html;
-            return
+                scoreboardDiv.innerHTML = html;
+            }  
           }
+          
+            return
         }else{
           console.log(gajiensPecKartas)
-          console.log(dalitajs)
           if(dalitajs == 0){
             if(mansPlayerId == 1){
               console.log("aiaibfaliukgfrbailukgbilfkajb")
               socket.emit('spelesSakums', {istabaID})
-              
             }
           }else{
             if (placedCards.length === 3) {
@@ -450,7 +463,7 @@
                 
                 const punkti = acisSumma(placedCards, GajUzvaretajs)
                 console.log(punkti)
-                gajiensPecKartas++
+                
                 socket.emit('gajienaUzvaretajs', { istabaID, GajUzvaretajs, punkti});
               }     
               
@@ -466,10 +479,15 @@
               
               console.log(mansPlayerId, playerGajiens)
               if(mansPlayerId == playerGajiens ){
+                document.getElementById("tavsGajiens").style.display = "inline-block";
 
                 console.log("strada")
                 container.addEventListener("click", function playerClick(event) {
+
+
                 if (event.target.classList.contains("card")) {
+                  document.getElementById("tavsGajiens").style.display = "none";
+
                   const kartsVertiba = parseInt(event.target.src.split("/").pop().replace(".png", ""));
                   // norada kurs nolika karti
                   
@@ -498,12 +516,16 @@
       }
 
     function restartGame(){
-      socket.emit('restartGame')
+      socket.emit('restartGame', istabaID)
     }
+
     socket.on('restartedGameValues',({gajiensPK, dalitajsRefresh, acis})=>{
       gajiensPecKartas = gajiensPK
       dalitajs = dalitajsRefresh
       playerAcis = acis
+      gajiensPecKartas = 1
+      dalitajs = 0
+      playerAcis = [0,0,0]
       Spele()
 
     });
@@ -512,11 +534,7 @@
       
 
     // Example button to update the value of x
-    document.getElementById('updateButton').addEventListener('click', () => {
-
-      Spele()
-      document.getElementById('acisSpeletaji').style.display = 'none';
-    });
+    
 
 
     socket.on('updatedGajiens', ({jaunais, kartsVertiba, mansPlayerId}) =>{
