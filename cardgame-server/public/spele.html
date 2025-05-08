@@ -59,7 +59,113 @@
 
     <div id="textW"></div>
 
+    <style>
+      #cardcontainer {
+            position: relative;
+            display: flex;
+            justify-content: center; 
+            align-items: flex-end;
+            margin-bottom: 100px;
+            height: 200px;
+            width: 90%;
+            overflow: visible;
+            /* border: 2px solid #ccc; Optional: for visibility */
+        }
 
+        .turn-indicator {
+          text-align: center;
+          padding: 15px;
+          margin: 10px auto;
+          border-radius: 8px;
+          font-size: 1.2em;
+          font-weight: bold;
+          transition: all 0.3s ease;
+          max-width: 400px;
+        }
+
+        .your-turn {
+          background-color: chocolate;
+          color: white;
+          box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+          animation: pulse 1.5s infinite;
+        }
+
+        .waiting {
+          background-color: #f5f5f5;
+          color: #666;
+          border: 2px solid #ddd;
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.02); }
+          100% { transform: scale(1); }
+        }
+
+        .card {
+            width: 150px;
+            height: 250px;
+            transition: transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+            cursor: pointer;
+            will-change: transform;
+            position: absolute;
+            transform-origin: bottom center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .card:hover{
+          box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+        }
+        
+        #kartisUzGalda{
+          position: relative;
+          min-height: 300px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 20px auto;
+          gap: 20px;
+        }
+
+        .placed {
+          /* --card-rotation: 0deg; */
+          position: relative;
+          box-shadow: 0 15px rgba(0,0,0,0,0.2);
+          border-radius: 10px;
+          z-index: 1;
+          transform-origin: center center;
+          width: 150px !important;
+          height: 250px !important;
+          transition: transform 0.3s ease-out;
+        }
+
+        .placed:hover {
+          transform: translateY(-10px);
+        }
+
+        .card-flying {
+          position: fixed;
+          z-index: 100;
+          width: 150px !important;
+          height: 250px !important;
+          transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transform-origin: center;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+          border-radius: 10px;
+          will-change: transform;
+        }
+
+        .card, .placed .card-flying {
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          border-radius: 10px; 
+        }
+
+        .card-placed-animation {
+          animation: none;
+        }
+    </style>
 
     <!-- Chat widget -->
     <div id="chat-container">
@@ -71,15 +177,17 @@
       />
     </div>
 
+    <div id="turnIndicator" class="turn-indicator"></div>
+    
     <!-- Card containers -->
     <div id="kartisUzGalda"></div>
     <div id="cardcontainer" ></div>
-    <h3 style="color: var(--balts); margin-top: 60px; ">Punkti spēlē</h3>
+    <h3 style="color: var(--balts) margin-top: 30px;">Punkti spēlē</h3>
     <div id="acisSpeletaji" class="scoreboard"></div> <!-- punktu display -->
     <h3 style="color: var(--balts);">Punkti kopā</h3>
     <div id="scoreboard" class="scoreboard"></div>
-    <button class="button" id="restartBTT" onclick="restartGame()">Sākt spēli</button>
-    <div id ="tavsGajiens" style="background-color: rgb(0, 255, 0);width: 40px; height: 20px; display: none;"></div>
+    <button class="button" id="restartBTT" onclick="restartGame()">Start</button>
+    <div id ="tavsGajiens"></div>
 
     <script type="text/javascript" src="/backend.js"></script>
 
@@ -218,32 +326,32 @@
               let bounceAnimationFrame = null;
               let bouncing = false;
               let hoverOffset = -30; // Smaller offset for more subtle effect
-
+              
               function startBounce() {
                   if (bouncing) return;
                   bouncing = true;
-
+                  
                   let start = null;
-
+                  
                   function animateBounce(timestamp) {
                       if (!start) start = timestamp;
                       const progress = timestamp - start;
-
+                      
                       // Get original angle
                       const angle = parseFloat(card.dataset.angle || 0);
-
+                      
                       // Apply bounce with original rotation
                       const bounceY = hoverOffset + Math.sin(progress / 300) * 3; // Reduced bounce amplitude
                       card.style.transform = `rotate(${angle}deg) translateY(${bounceY}px)`;
-
+                      
                       if (bouncing) {
                           bounceAnimationFrame = requestAnimationFrame(animateBounce);
                       }
                   }
-
+                  
                   bounceAnimationFrame = requestAnimationFrame(animateBounce);
               }
-
+              
               function stopBounce() {
                   bouncing = false;
                   if (bounceAnimationFrame) {
@@ -251,17 +359,17 @@
                       bounceAnimationFrame = null;
                   }
               }
-
+              
               card.addEventListener("mouseenter", () => {
                   // Get original angle
                   const angle = parseFloat(card.dataset.angle || 0);
-
+                  
                   card.style.transition = "transform 0.3s ease-out";
                   // Don't change z-index - keep original layering
-
+                  
                   // Apply hover effect preserving rotation
                   card.style.transform = `rotate(${angle}deg) translateY(${hoverOffset}px)`;
-
+                  
                   // Start bounce after transition
                   setTimeout(() => {
                       if (card.matches(':hover')) {
@@ -269,12 +377,12 @@
                       }
                   }, 300);
               });
-
+              
               card.addEventListener("mouseleave", () => {
                   stopBounce();
                   card.style.transition = "transform 0.3s ease-out";
                   card.style.transform = card.dataset.baseTransform || '';
-
+                  
                   // No need to reset z-index since we never changed it
               });
           });
@@ -284,7 +392,7 @@
       function refresh() {
 
         placedCardsContainer.innerHTML = ""
-
+        
         // Remove all previous images before adding new ones
 
         // Loop through placedCards and add the new images
@@ -306,32 +414,32 @@
       function arrangeCardsInArc() {
           const cards = document.querySelectorAll(".card");
           const total = cards.length;
-
+          
           // Exit if no cards
           if (total === 0) return;
-
+          
           // Get container dimensions
           const containerRect = container.getBoundingClientRect();
           const containerWidth = containerRect.width;
-
+          
           // Calculate center point and base position
           const centerX = containerWidth / 2;
           const baseY = 200; // Position from the top
-
+          
           // Adjust arc parameters based on number of cards
           const minRadius = 350; // Minimum radius
-          const maxRadius = 500; // Maximum radius
+          const maxRadius = 500; // Maximum radius 
           const radius = minRadius + ((maxRadius - minRadius) * (1 - total/8)); // Dynamic radius
-
+          
           // Increased spacing between cards
           const maxSpread = Math.min(75, total * 10); // Increased from 60 to 75 for wider spread
           const spread = total > 1 ? maxSpread : 0;
           const minAngle = -spread / 2;
           const maxAngle = spread / 2;
-
+          
           // Flatter arc (less height difference between middle and outer cards)
           const peakOffset = 70; // Reduced from 80 to make arc flatter
-
+          
           // Position each card
           cards.forEach((card, i) => {
               // Handle single card case
@@ -346,14 +454,14 @@
                   card.style.zIndex = 10;
                   return;
               }
-
+              
               // Calculate the angle for this card - dynamically adjusted
               const angle = minAngle + ((maxAngle - minAngle) / (total - 1)) * i;
               const radians = (angle * Math.PI) / 180;
-
+              
               // Calculate x position with improved spacing
               const x = centerX + radius * Math.sin(radians) - 75; // 75 is half card width
-
+              
               // Calculate y position with flatter arc effect - using a gentler curve
               // This makes the middle and outer cards more level with each other
               let arcOffset = 0;
@@ -361,28 +469,28 @@
                   const midpoint = (total - 1) / 2;
                   const distanceFromMid = Math.abs(i - midpoint);
                   // Using a linear function instead of squared for a flatter arc
-                  const factor = 1 - (distanceFromMid / midpoint);
+                  const factor = 1 - (distanceFromMid / midpoint); 
                   arcOffset = peakOffset * factor;
               }
-
+              
               // Calculate final y position - cards closer to middle rise slightly higher
               const y = baseY - arcOffset;
-
+              
               // Set position with fixed pixel values
               card.style.position = 'absolute';
               card.style.left = `${Math.round(x)}px`;
               card.style.top = `${Math.round(y)}px`;
-
+              
               // Adjust rotation - less dramatic when fewer cards
               // Cards should fan out, with rotation more extreme at edges
               const rotationFactor = Math.min(0.9, total / 7); // Reduced rotation factor slightly
               const rotationAngle = angle * rotationFactor;
-
+              
               const baseTransform = `rotate(${rotationAngle}deg)`;
               card.style.transform = baseTransform;
               card.dataset.baseTransform = baseTransform;
               card.dataset.angle = rotationAngle; // Store angle for hover effect
-
+              
               // Add z-index to create depth effect - middle cards appear in front
               const zIndex = Math.round(10 + (total / 2) - Math.abs(i - (total / 2)));
               card.style.zIndex = zIndex;
@@ -424,9 +532,19 @@
 
       let delayGajiens = 600
 
-
+      function updateTurnIndicator() {
+        const turnIndicator = document.getElementById("turnIndicator");
+        if (playerGajiens == mansPlayerId) {
+          turnIndicator.className = "turn-indicator your-turn";
+          turnIndicator.textContent = "Tava kārta!";
+        } else {
+          turnIndicator.className = "turn-indicator waiting";
+          turnIndicator.textContent = `Gaidiet spēlētāju #${playerGajiens}`;
+        }
+      }
 
       function Spele(){
+        updateTurnIndicator();
         console.log("sasniedza mani")
         console.log(gajiensPecKartas, dalitajs, playerAcis)
         document.getElementById("restartBTT").style.display = "none";
@@ -543,6 +661,7 @@
       placedCards.push(kartsVertiba)
       placedCardsPlayer.push(mansPlayerId)
       refresh()
+      updateTurnIndicator();
       console.log(placedCards)
     });
     </script>
