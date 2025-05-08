@@ -182,15 +182,37 @@ io.on('connection', (socket) => {
   
 
 
-  socket.on('restartGame', ()=>{
+  socket.on('restartGame', (istabaID)=>{
     const gajiensPK = 1
     const dalitajsRefresh = 0
     const acis = [0,0,0]
-    socket.emit('restartedGameValues', {gajiensPK, dalitajsRefresh,acis})
+    io.to(istabaID).emit('restartedGameValues', {gajiensPK, dalitajsRefresh,acis})
   })
 
 }); 
 
 http.listen(3000, () => {
   console.log('Serveris darbojas: http://localhost:3000');
+});
+
+const usernames = {}; // socket.id => username
+
+io.on("connection", (socket) => {
+  console.log("Savienots:", socket.id);
+
+  socket.on("set_username", (username) => {
+    usernames[socket.id] = username;
+    console.log(`${socket.id} tagad ir ${username}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Atvienojās:", usernames[socket.id] || socket.id);
+    delete usernames[socket.id];
+  });
+
+  // Kad lietotājs sūta ziņu čatā
+  socket.on("chat_message", (msg) => {
+    const name = usernames[socket.id] || "Nezināms";
+    io.to(socket.room).emit("chat_message", `${name}: ${msg}`);
+  });
 });
