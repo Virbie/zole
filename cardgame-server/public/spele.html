@@ -50,7 +50,6 @@
       <h4 class="tekstinjs">Dalībnieki:</h4>
       <ul id="dalibnieki" class="tekstinjs"></ul>
     </div>
-
     <!-- Main Content -->
     <div class="content room-content">
       <button id="joinBtn" class="button">Pievienoties istabai</button>
@@ -71,23 +70,23 @@
         placeholder="Raksti ziņojumu… (Enter nosūta)"
       />
     </div>
-    
+
     <!-- Card containers -->
     <div id="kartisUzGalda"></div>
     <div id="cardcontainer" ></div>
-    <h3 style="color: var(--balts);">Punkti spēlē</h3>
+    <h3 style="color: var(--balts); margin-top: 60px; ">Punkti spēlē</h3>
     <div id="acisSpeletaji" class="scoreboard"></div> <!-- punktu display -->
     <h3 style="color: var(--balts);">Punkti kopā</h3>
     <div id="scoreboard" class="scoreboard"></div>
-    <button class="button" id="restartBTT" onclick="restartGame()">Start</button>
-    <div id ="tavsGajiens" style="background-color: aquamarine;width: 400px; height: 200px; display: none;"></div>
+    <button class="button" id="restartBTT" onclick="restartGame()">Sākt spēli</button>
+    <div id ="tavsGajiens" style="background-color: rgb(0, 255, 0);width: 40px; height: 20px; display: none;"></div>
 
     <script type="text/javascript" src="/backend.js"></script>
 
 
 
-    
-    
+
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       let cards = []; // Array for card objects
@@ -95,7 +94,7 @@
       let placedCardsPlayer = [] // lai katrai kartij pieliktu kada speletaja vertibu
       let container = document.getElementById("cardcontainer"); // Card container element
       let placedCardsContainer = document.getElementById("kartisUzGalda") // kartis kas noliktas uz galda
-      
+
 
       let punktiDiv = document.getElementById('acisSpeletaji')
       let scoreboardDiv = document.getElementById('scoreboard')
@@ -196,7 +195,7 @@
       // Updated displayCards function
       function displayCards() {
           container.innerHTML = "";
-          
+
           for (let i = 0; i < 8; i++) {
               const img = document.createElement("img");
               img.src = "/resources/" + SavasKartis[i] + ".png"; // Image source
@@ -206,7 +205,7 @@
               img.height = 250;
               container.appendChild(img); // Add card to the container
           }
-          
+
           // Wait a brief moment for images to load before arranging
           setTimeout(() => {
               arrangeCardsInArc();
@@ -219,32 +218,32 @@
               let bounceAnimationFrame = null;
               let bouncing = false;
               let hoverOffset = -30; // Smaller offset for more subtle effect
-              
+
               function startBounce() {
                   if (bouncing) return;
                   bouncing = true;
-                  
+
                   let start = null;
-                  
+
                   function animateBounce(timestamp) {
                       if (!start) start = timestamp;
                       const progress = timestamp - start;
-                      
+
                       // Get original angle
                       const angle = parseFloat(card.dataset.angle || 0);
-                      
+
                       // Apply bounce with original rotation
                       const bounceY = hoverOffset + Math.sin(progress / 300) * 3; // Reduced bounce amplitude
                       card.style.transform = `rotate(${angle}deg) translateY(${bounceY}px)`;
-                      
+
                       if (bouncing) {
                           bounceAnimationFrame = requestAnimationFrame(animateBounce);
                       }
                   }
-                  
+
                   bounceAnimationFrame = requestAnimationFrame(animateBounce);
               }
-              
+
               function stopBounce() {
                   bouncing = false;
                   if (bounceAnimationFrame) {
@@ -252,17 +251,17 @@
                       bounceAnimationFrame = null;
                   }
               }
-              
+
               card.addEventListener("mouseenter", () => {
                   // Get original angle
                   const angle = parseFloat(card.dataset.angle || 0);
-                  
+
                   card.style.transition = "transform 0.3s ease-out";
                   // Don't change z-index - keep original layering
-                  
+
                   // Apply hover effect preserving rotation
                   card.style.transform = `rotate(${angle}deg) translateY(${hoverOffset}px)`;
-                  
+
                   // Start bounce after transition
                   setTimeout(() => {
                       if (card.matches(':hover')) {
@@ -270,69 +269,69 @@
                       }
                   }, 300);
               });
-              
+
               card.addEventListener("mouseleave", () => {
                   stopBounce();
                   card.style.transition = "transform 0.3s ease-out";
                   card.style.transform = card.dataset.baseTransform || '';
-                  
+
                   // No need to reset z-index since we never changed it
               });
           });
       }
 
-      // sakas kartis uz galda paradisana 
+      // sakas kartis uz galda paradisana
       function refresh() {
-        
+
         placedCardsContainer.innerHTML = ""
-        
+
         // Remove all previous images before adding new ones
 
         // Loop through placedCards and add the new images
         for (let i = 0; i < placedCards.length; i++) {
-          
+
             const img = document.createElement("img");
             img.src = "/resources/" + placedCards[i] + ".png"; // Image source
             img.classList.add("placed"); // Add card class
             img.width = 150;
             img.height = 250;
-            
+
 
 
       placedCardsContainer.appendChild(img);
-            // Add card to the container  
+            // Add card to the container
         }
       }
 
       function arrangeCardsInArc() {
           const cards = document.querySelectorAll(".card");
           const total = cards.length;
-          
+
           // Exit if no cards
           if (total === 0) return;
-          
+
           // Get container dimensions
           const containerRect = container.getBoundingClientRect();
           const containerWidth = containerRect.width;
-          
+
           // Calculate center point and base position
           const centerX = containerWidth / 2;
           const baseY = 200; // Position from the top
-          
+
           // Adjust arc parameters based on number of cards
           const minRadius = 350; // Minimum radius
-          const maxRadius = 500; // Maximum radius 
+          const maxRadius = 500; // Maximum radius
           const radius = minRadius + ((maxRadius - minRadius) * (1 - total/8)); // Dynamic radius
-          
+
           // Increased spacing between cards
           const maxSpread = Math.min(75, total * 10); // Increased from 60 to 75 for wider spread
           const spread = total > 1 ? maxSpread : 0;
           const minAngle = -spread / 2;
           const maxAngle = spread / 2;
-          
+
           // Flatter arc (less height difference between middle and outer cards)
           const peakOffset = 70; // Reduced from 80 to make arc flatter
-          
+
           // Position each card
           cards.forEach((card, i) => {
               // Handle single card case
@@ -347,14 +346,14 @@
                   card.style.zIndex = 10;
                   return;
               }
-              
+
               // Calculate the angle for this card - dynamically adjusted
               const angle = minAngle + ((maxAngle - minAngle) / (total - 1)) * i;
               const radians = (angle * Math.PI) / 180;
-              
+
               // Calculate x position with improved spacing
               const x = centerX + radius * Math.sin(radians) - 75; // 75 is half card width
-              
+
               // Calculate y position with flatter arc effect - using a gentler curve
               // This makes the middle and outer cards more level with each other
               let arcOffset = 0;
@@ -362,28 +361,28 @@
                   const midpoint = (total - 1) / 2;
                   const distanceFromMid = Math.abs(i - midpoint);
                   // Using a linear function instead of squared for a flatter arc
-                  const factor = 1 - (distanceFromMid / midpoint); 
+                  const factor = 1 - (distanceFromMid / midpoint);
                   arcOffset = peakOffset * factor;
               }
-              
+
               // Calculate final y position - cards closer to middle rise slightly higher
               const y = baseY - arcOffset;
-              
+
               // Set position with fixed pixel values
               card.style.position = 'absolute';
               card.style.left = `${Math.round(x)}px`;
               card.style.top = `${Math.round(y)}px`;
-              
+
               // Adjust rotation - less dramatic when fewer cards
               // Cards should fan out, with rotation more extreme at edges
               const rotationFactor = Math.min(0.9, total / 7); // Reduced rotation factor slightly
               const rotationAngle = angle * rotationFactor;
-              
+
               const baseTransform = `rotate(${rotationAngle}deg)`;
               card.style.transform = baseTransform;
               card.dataset.baseTransform = baseTransform;
               card.dataset.angle = rotationAngle; // Store angle for hover effect
-              
+
               // Add z-index to create depth effect - middle cards appear in front
               const zIndex = Math.round(10 + (total / 2) - Math.abs(i - (total / 2)));
               card.style.zIndex = zIndex;
@@ -416,7 +415,7 @@
       });
 
       socket.on('updatedUzvaretajs',({GajUzvaretajs, punkti}) =>{
-          playerGajiens = GajUzvaretajs; 
+          playerGajiens = GajUzvaretajs;
           punktiDiv.textContent = punkti
           gajiensPecKartas++
           console.log(gajiensPecKartas, "onsnsnsnnsnsns")
@@ -441,9 +440,9 @@
                 let { lieliePunkti, maziePunkti } = scoreboard[player];
                 html += `<div><strong>${player}:</strong> Lielie: ${lieliePunkti}, Mazie: ${maziePunkti}</div>`;
                 scoreboardDiv.innerHTML = html;
-            }  
+            }
           }
-          
+
             return
         }else{
           console.log(gajiensPecKartas)
@@ -459,24 +458,24 @@
                 console.log(placedCards)
                 console.log(placedCardsPlayer)
                 const GajUzvaretajs = GajienaUzvaretajs(placedCards, placedCardsPlayer);
-                
-                
+
+
                 const punkti = acisSumma(placedCards, GajUzvaretajs)
                 console.log(punkti)
-                
+
                 socket.emit('gajienaUzvaretajs', { istabaID, GajUzvaretajs, punkti});
-              }     
-              
-              
+              }
+
+
               placedCards = [];
               placedCardsPlayer = [];
               placedCardsContainer.innerHTML = "";
 
               setTimeout(Spele, delayGajiens);
               return
-              
+
             }else{
-              
+
               console.log(mansPlayerId, playerGajiens)
               if(mansPlayerId == playerGajiens ){
                 document.getElementById("tavsGajiens").style.display = "inline-block";
@@ -490,7 +489,7 @@
 
                   const kartsVertiba = parseInt(event.target.src.split("/").pop().replace(".png", ""));
                   // norada kurs nolika karti
-                  
+
                   event.target.remove();
                   arrangeCardsInArc();
 
@@ -508,11 +507,11 @@
             setTimeout(Spele, delayGajiens);
             return
             }
-            
+
           }
         }
-        
-        
+
+
       }
 
     function restartGame(){
@@ -531,10 +530,10 @@
     });
 
 
-      
+
 
     // Example button to update the value of x
-    
+
 
 
     socket.on('updatedGajiens', ({jaunais, kartsVertiba, mansPlayerId}) =>{
